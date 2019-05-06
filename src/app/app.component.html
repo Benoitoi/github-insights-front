@@ -1,0 +1,13 @@
+<h2>Number of repositories : {{nbRepositories}}</h2>
+<h2>Number of members : {{nbMembers}}</h2>
+
+<google-chart *ngIf="data2Ready" title="Top Languages" type="ColumnChart" [data]="data" [columnNames]="['Language', 'Repositories']" [options]="options" [width]="width" [height]="height">
+</google-chart>
+
+<google-chart title="Top Members" type="BarChart" [data]="data2" [columnNames]="['User', 'Pr']" [options]="options" [width]="width" [height]="height">
+</google-chart>
+
+<google-chart title="Top Members" type="Table" [data]="data2" [columnNames]="['Repository', 'Owner']" [options]="options" [width]="width" [height]="height">
+</google-chart>
+
+<router-outlet></router-outlet>
