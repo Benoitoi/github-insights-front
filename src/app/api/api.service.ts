@@ -8,33 +8,38 @@ import popularePR from '../../popularePR.json';
 
 const API_URL_DEV = "http://localhost:8080/";
 const API_URL_PROD = "https://nataliia-radina.github.io/react-vis-example/";
-const TOKEN = "30b5a3a6c9d7c9db1aaec4e93b6d4d6e285eb0d3";
-const LOGIN = "Benoitoi";
-const ORGANISATION = "Zenika"
 
 @Injectable()
 export class ApiService {
+    LOGIN = "Benoitoi";
+    TOKEN = "c660c7fa20775031eb41402bbf46b3de72e31eac";
+    ORGANISATION = "Zenika"
     constructor() { }
 
-    getStats(stats): Promise<any> {
+    getStats(stats, organisation, token, login): Promise<any> {
+        this.ORGANISATION = organisation ? organisation : this.ORGANISATION
+        this.LOGIN = login ? login : this.LOGIN
+        this.TOKEN = token ? token : this.TOKEN
         return new Promise((resolve, reject) => {
-            if (stats == 'nbRepoStats') {
-                console.log(nbRepoStats);
-                resolve(nbRepoStats.data)
-            } else if (stats == 'basicStats') {
-                console.log(basicStats);
-                resolve(basicStats.data)
-            } else if (stats == 'nbMembresStats') {
-                console.log(nbMembresStats);
-                resolve(nbMembresStats.data)
-            } else if (stats == 'populareLanguages') {
-                console.log(populareLanguages);
-                resolve(populareLanguages.data)
-            } else if (stats == 'popularePR') {
-                console.log(popularePR);
-                resolve(popularePR.data)
-            }
-            /*this.createCORSRequest(stats)
+            /*setTimeout(() => {
+                if (stats == 'nbRepoStats') {
+                    console.log(nbRepoStats);
+                    resolve(nbRepoStats.data)
+                } else if (stats == 'basicStats') {
+                    console.log(basicStats);
+                    resolve(basicStats.data)
+                } else if (stats == 'nbMembresStats') {
+                    console.log(nbMembresStats);
+                    resolve(nbMembresStats.data)
+                } else if (stats == 'populareLanguages') {
+                    console.log(populareLanguages);
+                    resolve(populareLanguages.data)
+                } else if (stats == 'popularePR') {
+                    console.log(popularePR);
+                    resolve(popularePR.data)
+                }
+            }, 3000);*/
+            this.createCORSRequest(stats)
                 .then((response) => {
                     console.log(response)
                     console.log(stats + " : réponse du serveur ok");
@@ -42,7 +47,7 @@ export class ApiService {
                 }).catch((error) => {
                     console.log(stats + " : réponse du serveur ko");
                     reject(error);
-                })*/
+                })
         });
     }
 
@@ -50,7 +55,7 @@ export class ApiService {
         return new Promise((resolve, reject) => {
             var xhr = new XMLHttpRequest();
             if ("withCredentials" in xhr) {
-                var params = `token=${TOKEN}&login=${LOGIN}&orga=${ORGANISATION}`;
+                var params = `token=${this.TOKEN}&login=${this.LOGIN}&orga=${this.ORGANISATION}`;
 
                 xhr.open('POST', API_URL_DEV + stats, true);
                 xhr.onreadystatechange = () => { if (xhr.readyState == 4) console.log(`Contact du serveur pour récupération ${stats} réussi !`); };

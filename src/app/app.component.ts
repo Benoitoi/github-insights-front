@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { ApiService } from './api/api.service';
 
 @Component({
@@ -7,7 +7,8 @@ import { ApiService } from './api/api.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  data2Ready: boolean = false;
+  nbRepositoriesReady: boolean = false;
+  nbMembersReady: boolean = false;
 
   constructor(private apiService: ApiService) { }
 
@@ -17,46 +18,157 @@ export class AppComponent implements OnInit {
   nbRepositories;
   data = [];
   data2 = [];
+  data3 = [];
+  data4 = [];
+  data5 = [];
+  data6 = [];
+  organisation = "Zenika";
+  dataReady = false
+  data2Ready = false
+  data3Ready = false
+  data4Ready = false
+  data5Ready = false
+  data6Ready = false
   columnNames = ['Browser', 'Percentage'];
   options = {
     colors: [],
   };
+
+  optionsTree = {
+    minColor: "#ff7777",
+    midColor: '#ffff77',
+    maxColor: '#77ff77',
+    headerHeight: 15,
+    showScale: true,
+    generateTooltip: this.showStaticTooltip
+  };
   width = 900;
-  height = 400;
+  height = 650;
+  innerWidth = window.innerWidth - 15;
+  showStaticTooltip(row, size, value) {
+    console.log(value)
+    return "";
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    this.innerWidth = window.innerWidth - 15;
+    //this.innerLength = window.innerWidth;
+  }
 
   ngOnInit(): void {
+    this.load();
+  }
+
+  load() {
     // Nb de membres
-    this.apiService.getStats('nbMembresStats').then((response) => {
+    this.apiService.getStats('nbMembresStats', this.organisation, null, null).then((response) => {
       console.log(response)
       this.nbMembers = response.countMembers;
+      this.nbMembersReady = true;
     }).catch((error) => {
       console.log(error)
     })
-
     // Stats basiques
-    this.apiService.getStats('basicStats').then((response) => {
+    this.apiService.getStats('basicStats', this.organisation, null, null).then((response) => {
       console.log(response)
+      console.log(response.data.organization.membersWithRole.edges)
+      this.data4.push(["Famous Members", null, 0])
+      let usersLangagues = [];
+      let count = 0;
+      for (let node of response.data.organization.membersWithRole.edges) {
+        console.log(node)
+        console.log(node.node.name)
+        console.log(node.node.followers.totalCount)
+        this.data4.push([(node.node.name.trim() === '' ? node.node.login : node.node.name) + " (" + node.node.followers.totalCount + ")", 'Famous Members', node.node.followers.totalCount])
+        this.data5.push([(node.node.name.trim() === '' ? node.node.login : node.node.name), node.node.repositories.totalCount])
+        for (let repo of node.node.repositories.nodes) {
+          if (repo.primaryLanguage) {
+            if (!usersLangagues[count]) {
+              usersLangagues.push(new Map())
+            }
+            /*console.log(count)
+            console.log(repo.primaryLanguage.name)
+            console.log(usersLangagues[count].get(repo.primaryLanguage.name))
+            console.log(usersLangagues[count])*/
+            if (usersLangagues[count].get(repo.primaryLanguage.name)) {
+              usersLangagues[count].set(repo.primaryLanguage.name, usersLangagues[count].get(repo.primaryLanguage.name) + 1);
+            } else {
+              usersLangagues[count].set(repo.primaryLanguage.name, 1)
+            }
+          }
+        }
+        var array = [];
+        usersLangagues[count].forEach((value, key) => {
+          console.log(key + " = " + value);
+          array.push({
+            language: key,
+            count: value
+          });
+        });
+        var sorted = array.sort((a, b) => {
+          return (b.count > a.count) ? 1 : ((a.count > b.count) ? -1 : 0)
+        });
+        this.data3.push([(node.node.name.trim() === '' ? node.node.login : node.node.name), sorted[0].language, sorted[0].count])
+        console.log(sorted)
+        console.log(usersLangagues[count]);
+        count++;
+      }
+      console.log(this.data4)
+      var map = new Map();
+      for (let stats of this.data3) {
+        if (map.get(stats[1])) {
+          map.set(stats[1], map.get(stats[1]) + 1)
+        } else {
+          map.set(stats[1], 1)
+        }
+      }
+      var array = [];
+      map.forEach((value, key) => {
+        console.log(key + " = " + value);
+        array.push({
+          language: key,
+          count: value
+        });
+      });
+      var sorted = array.sort((a, b) => {
+        return (b.count > a.count) ? 1 : ((a.count > b.count) ? -1 : 0)
+      });
+      for (let lang of sorted) {
+        this.data6.push([lang.language, lang.count])
+      }
+      console.log(this.data6)
+      this.data3 = this.data3.sort((a, b) => b[2] - a[2]);
+      this.data4 = this.data4.sort((a, b) => b[2] - a[2]);
+      this.data5 = this.data5.sort((a, b) => b[1] - a[1]);
+      this.data3Ready = true;
+      this.data6Ready = true;
+      this.data4Ready = true;
+      this.data5Ready = true;
+      console.log(this.data4)
+      console.log(this.data5)
     }).catch((error) => {
       console.log(error)
     })
 
     // Stats des respos collaboratifs
-    this.apiService.getStats('collaborativesRepos').then((response) => {
+    this.apiService.getStats('collaborativesRepos', this.organisation, null, null).then((response) => {
       console.log(response)
     }).catch((error) => {
       console.log(error)
     })
 
     // Nb de repo
-    this.apiService.getStats('nbRepoStats').then((response) => {
+    this.apiService.getStats('nbRepoStats', this.organisation, null, null).then((response) => {
       console.log(response)
       this.nbRepositories = response.countRepositories;
+      this.nbRepositoriesReady = true;
     }).catch((error) => {
       console.log(error)
     })
 
     // Langages populaires
-    this.apiService.getStats('populareLanguages').then((response) => {
+    this.apiService.getStats('populareLanguages', this.organisation, null, null).then((response) => {
       console.log(response)
       let languagesArray = []
       for (let i = 0; i < response.langages.length; i++) {
@@ -83,18 +195,19 @@ export class AppComponent implements OnInit {
         console.log(this.options.colors)
         this.data.push([language.language, language.nbRepositories])
       }
-      this.data2Ready = true;
+      this.dataReady = true;
     }).catch((error) => {
       console.log(error)
     })
 
     // Grosses PR
-    this.apiService.getStats('popularePR').then((response) => {
+    this.apiService.getStats('popularePR', this.organisation, null, null).then((response) => {
       console.log(response)
       response = response.sort((a, b) => b.count - a.count);
       for (let user of response) {
         this.data2.push([user.member, user.count])
       }
+      this.data2Ready = true;
       console.log(response)
     }).catch((error) => {
       console.log(error)
