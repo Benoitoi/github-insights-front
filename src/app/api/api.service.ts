@@ -16,10 +16,12 @@ export class ApiService {
     ORGANISATION = "Zenika"
     constructor() { }
 
-    getStats(stats, organisation, token, login): Promise<any> {
+    getStats(stats, organisation, login, token): Promise<any> {
         this.ORGANISATION = organisation ? organisation : this.ORGANISATION
-        this.LOGIN = login ? login : this.LOGIN
-        this.TOKEN = token ? token : this.TOKEN
+        this.LOGIN = login != null ? login : this.LOGIN
+        this.TOKEN = token != null ? token : this.TOKEN
+        console.log(this.LOGIN)
+        console.log(this.TOKEN)
         return new Promise((resolve, reject) => {
             /*setTimeout(() => {
                 if (stats == 'nbRepoStats') {
@@ -52,6 +54,8 @@ export class ApiService {
     }
 
     createCORSRequest(stats): Promise<any> {
+        console.log(this.LOGIN)
+        console.log(this.TOKEN)
         return new Promise((resolve, reject) => {
             var xhr = new XMLHttpRequest();
             if ("withCredentials" in xhr) {

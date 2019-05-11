@@ -26,6 +26,8 @@ export class AppComponent implements OnInit {
   data5 = [];
   data6 = [];
   organisation = "Zenika";
+  user = null;
+  token = null;
   dataReady = false
   data2Ready = false
   data3Ready = false
@@ -87,7 +89,15 @@ export class AppComponent implements OnInit {
     axios.get('http://localhost:8000/api/code', { headers: {
       'Accept': 'application/json',
       'Authorization': 'Bearer ' + token
-    } }).then(response => console.log(response.data));
+    } }).then(response => {
+      console.log(response.data)
+      this.user = response.data.username;
+      this.token = response.data.token;
+      console.log(response.data.username)
+      console.log(response.data.token)
+      this.load();
+    }
+    );
     // instance.get()
     //   .then(function (response) {
     //     // handle success
@@ -110,7 +120,6 @@ export class AppComponent implements OnInit {
     //    .subscribe((data: string) => {
     //      console.log(data)
     //    });
-    //this.load();
   }
 
   getUser(token: string, reqHeader: HttpHeaders) {
@@ -125,7 +134,7 @@ export class AppComponent implements OnInit {
     this.data5Ready = false
     this.data6Ready = false
     // Nb de membres
-    this.apiService.getStats('nbMembresStats', this.organisation, null, null).then((response) => {
+    this.apiService.getStats('nbMembresStats', this.organisation, this.user, this.token).then((response) => {
       console.log(response)
       this.nbMembers = response.countMembers;
       this.nbMembersReady = true;
@@ -133,7 +142,7 @@ export class AppComponent implements OnInit {
       console.log(error)
     })
     // Stats basiques
-    this.apiService.getStats('basicStats', this.organisation, null, null).then((response) => {
+    this.apiService.getStats('basicStats', this.organisation, this.user, this.token).then((response) => {
       console.log(response)
       console.log(response.data.organization.membersWithRole.edges)
       this.data4.push(["Famous Members", null, 0])
@@ -215,14 +224,14 @@ export class AppComponent implements OnInit {
     })
 
     // Stats des respos collaboratifs
-    this.apiService.getStats('collaborativesRepos', this.organisation, null, null).then((response) => {
+    this.apiService.getStats('collaborativesRepos', this.organisation, this.user, this.token).then((response) => {
       console.log(response)
     }).catch((error) => {
       console.log(error)
     })
 
     // Nb de repo
-    this.apiService.getStats('nbRepoStats', this.organisation, null, null).then((response) => {
+    this.apiService.getStats('nbRepoStats', this.organisation, this.user, this.token).then((response) => {
       console.log(response)
       this.nbRepositories = response.countRepositories;
       this.nbRepositoriesReady = true;
@@ -231,7 +240,7 @@ export class AppComponent implements OnInit {
     })
 
     // Langages populaires
-    this.apiService.getStats('populareLanguages', this.organisation, null, null).then((response) => {
+    this.apiService.getStats('populareLanguages', this.organisation, this.user, this.token).then((response) => {
       console.log(response)
       let languagesArray = []
       for (let i = 0; i < response.langages.length; i++) {
@@ -264,7 +273,7 @@ export class AppComponent implements OnInit {
     })
 
     // Grosses PR
-    this.apiService.getStats('popularePR', this.organisation, null, null).then((response) => {
+    this.apiService.getStats('popularePR', this.organisation, this.user, this.token).then((response) => {
       console.log(response)
       response = response.sort((a, b) => b.count - a.count);
       for (let user of response) {
