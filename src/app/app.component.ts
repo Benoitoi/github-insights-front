@@ -1,5 +1,8 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { ApiService } from './api/api.service';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { environment } from '../environments/environment';
+const axios = require('axios');
 
 @Component({
   selector: 'app-root',
@@ -9,8 +12,8 @@ import { ApiService } from './api/api.service';
 export class AppComponent implements OnInit {
   nbRepositoriesReady: boolean = false;
   nbMembersReady: boolean = false;
-
-  constructor(private apiService: ApiService) { }
+  iamUrl = environment.iam + "api/code"
+  constructor(private apiService: ApiService, private http: HttpClient) { }
 
   title = 'Browser market shares at a specific website, 2014';
   type = 'PieChart';
@@ -56,11 +59,67 @@ export class AppComponent implements OnInit {
     //this.innerLength = window.innerWidth;
   }
 
+  getCookie(name: string) {
+    const value = "; " + document.cookie;
+    const parts = value.split("; " + name + "=");
+
+    if (parts.length == 2) {
+      return parts.pop().split(";").shift();
+    }
+  }
+
+
   ngOnInit(): void {
-    this.load();
+
+    var token = this.getCookie("token");
+    var reqHeader = new HttpHeaders({
+      'Authorization': 'Bearer ' + token,
+    });
+
+    console.log(token);
+    // var instance = axios.create({
+    //   baseURL: this.iamUrl,
+    //   timeout: 60000,
+    //   headers: { 'Authorization': 'Bearer ' + token }
+    // });
+
+    axios.get('http://localhost:8000/api/code', { headers: { 'authorization': 'bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjE5YWNkODhhY2U2YWMwNjA3NjNhMTI5NWI5ZTZmZGRhNjUyODJiNjAyMjlkODlhYzM5ZWM1YTBiMjZiOGVlMGFhNjJmYTAxMWNjYjNlNGY4In0.eyJhdWQiOiIzIiwianRpIjoiMTlhY2Q4OGFjZTZhYzA2MDc2M2ExMjk1YjllNmZkZGE2NTI4MmI2MDIyOWQ4OWFjMzllYzVhMGIyNmI4ZWUwYWE2MmZhMDExY2NiM2U0ZjgiLCJpYXQiOjE1NTc1OTQ1MzMsIm5iZiI6MTU1NzU5NDUzMywiZXhwIjoxNTg5MjE2OTMzLCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.Oxshx-rmzslxZQCbChg7g_AVKhg6J6HrIp3P9T7TshPmwVvZT5g1jg91y1ixMZXR63Rrvw-QLifskuV9RFHkpBX7AQ04ISiuzOnCcP4v19TE_BMLfCKmdTEaf_O7ZS6Z6QrA01NOk-D-00yF4jBoOZu4GbkR4wkfiYeHBOCfjhIrQjp7xcwDwVuj3NL9xwdCwyYppKEj-19YiXKNWJUFGkwUL9FYvm7UprhOUdtVmYF-l98b_tEFB7wBus5yU7rsCAB3-CywHSiQMYmPWsD9gShjjtDKFnkkv65Ga1EE7EufLFb5Yrd2dcggw7PDqh21F1dNqHjMmQ12_-Xp4EX-iy3YEXnOQXFspuwW0I8Lc4Wl-f1YOc9Z5ckHn8zlKbYRIUnceoonOyciURw-qWpHwSMpX-cXXLJ4mR5vDChMF-2jPRPMDCQbTvA-dmmB2Ozak0WMAfyXDj-gRzw4eb6UpTcMdQNaDjLQ4Ym9Qy2NbzDv6Nw4GAGPH1_9R5niQWsMoqM1hJcXLbY6sY7JljyIdKOEFKx0TmNTSZzq-ATpp-tcnD90UmHfbr-x51_J93MWmvZSFuEO5yEhuBTUWAAiwAvW4ehG4puWEEQjbzgIp86KuEPy02591wwNjFPJzR-Vlj8XfwmY2nIWoi3HgHx6AThR4l55bDhmtA78XLgvNDs' } }).then(console.log).catch(console.log);
+    // instance.get()
+    //   .then(function (response) {
+    //     // handle success
+    //     console.log(response);
+    //   })
+    //   .catch(function (error) {
+    //     // handle error
+    //     console.log(error);
+    //   })
+    //   .finally(function () {
+    //     // always executed
+    //   });
+    /*  this.apiService.createCORSRequestIam(token)
+      .then((response) => {
+          console.log(response)
+      }).catch((error) => {
+          console.log("réponse du serveur ko");
+      })*/
+    /* this.getUser(token, reqHeader)
+       .subscribe((data: any) => {
+         console.log(data)
+       });*/
+    //this.load();
+  }
+
+  getUser(token: string, reqHeader: HttpHeaders) {
+    return this.http.get(this.iamUrl, { headers: reqHeader });
   }
 
   load() {
+    this.dataReady = false
+    this.data2Ready = false
+    this.data3Ready = false
+    this.data4Ready = false
+    this.data5Ready = false
+    this.data6Ready = false
     // Nb de membres
     this.apiService.getStats('nbMembresStats', this.organisation, null, null).then((response) => {
       console.log(response)
