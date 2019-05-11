@@ -76,14 +76,18 @@ export class AppComponent implements OnInit {
       'Authorization': 'Bearer ' + token,
     });
 
-    console.log(token);
+    // console.log(token);
     // var instance = axios.create({
     //   baseURL: this.iamUrl,
     //   timeout: 60000,
     //   headers: { 'Authorization': 'Bearer ' + token }
     // });
 
-    axios.get('http://localhost:8000/api/code', { headers: { 'authorization': 'bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjE5YWNkODhhY2U2YWMwNjA3NjNhMTI5NWI5ZTZmZGRhNjUyODJiNjAyMjlkODlhYzM5ZWM1YTBiMjZiOGVlMGFhNjJmYTAxMWNjYjNlNGY4In0.eyJhdWQiOiIzIiwianRpIjoiMTlhY2Q4OGFjZTZhYzA2MDc2M2ExMjk1YjllNmZkZGE2NTI4MmI2MDIyOWQ4OWFjMzllYzVhMGIyNmI4ZWUwYWE2MmZhMDExY2NiM2U0ZjgiLCJpYXQiOjE1NTc1OTQ1MzMsIm5iZiI6MTU1NzU5NDUzMywiZXhwIjoxNTg5MjE2OTMzLCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.Oxshx-rmzslxZQCbChg7g_AVKhg6J6HrIp3P9T7TshPmwVvZT5g1jg91y1ixMZXR63Rrvw-QLifskuV9RFHkpBX7AQ04ISiuzOnCcP4v19TE_BMLfCKmdTEaf_O7ZS6Z6QrA01NOk-D-00yF4jBoOZu4GbkR4wkfiYeHBOCfjhIrQjp7xcwDwVuj3NL9xwdCwyYppKEj-19YiXKNWJUFGkwUL9FYvm7UprhOUdtVmYF-l98b_tEFB7wBus5yU7rsCAB3-CywHSiQMYmPWsD9gShjjtDKFnkkv65Ga1EE7EufLFb5Yrd2dcggw7PDqh21F1dNqHjMmQ12_-Xp4EX-iy3YEXnOQXFspuwW0I8Lc4Wl-f1YOc9Z5ckHn8zlKbYRIUnceoonOyciURw-qWpHwSMpX-cXXLJ4mR5vDChMF-2jPRPMDCQbTvA-dmmB2Ozak0WMAfyXDj-gRzw4eb6UpTcMdQNaDjLQ4Ym9Qy2NbzDv6Nw4GAGPH1_9R5niQWsMoqM1hJcXLbY6sY7JljyIdKOEFKx0TmNTSZzq-ATpp-tcnD90UmHfbr-x51_J93MWmvZSFuEO5yEhuBTUWAAiwAvW4ehG4puWEEQjbzgIp86KuEPy02591wwNjFPJzR-Vlj8XfwmY2nIWoi3HgHx6AThR4l55bDhmtA78XLgvNDs' } }).then(console.log).catch(console.log);
+
+    axios.get('http://localhost:8000/api/code', { headers: {
+      'Accept': 'application/json',
+      'Authorization': 'Bearer ' + token
+    } }).then(response => console.log(response.data));
     // instance.get()
     //   .then(function (response) {
     //     // handle success
@@ -96,16 +100,16 @@ export class AppComponent implements OnInit {
     //   .finally(function () {
     //     // always executed
     //   });
-    /*  this.apiService.createCORSRequestIam(token)
-      .then((response) => {
-          console.log(response)
-      }).catch((error) => {
-          console.log("réponse du serveur ko");
-      })*/
-    /* this.getUser(token, reqHeader)
-       .subscribe((data: any) => {
-         console.log(data)
-       });*/
+    //   this.apiService.createCORSRequestIam(token)
+    //   .then((response) => {
+    //       console.log(response)
+    //   }).catch((error) => {
+    //       console.log("réponse du serveur ko");
+    //   })
+    // this.getUser(token, reqHeader)
+    //    .subscribe((data: string) => {
+    //      console.log(data)
+    //    });
     //this.load();
   }
 
@@ -236,16 +240,16 @@ export class AppComponent implements OnInit {
       console.log(languagesArray)
       languagesArray = languagesArray.sort((a, b) => b.nbRepositories - a.nbRepositories);
       console.log(languagesArray)
-      // storing all letter and digit combinations 
-      // for html color code 
+      // storing all letter and digit combinations
+      // for html color code
       var letters = "0123456789ABCDEF";
 
 
       for (let language of languagesArray) {
-        // html color code starts with # 
+        // html color code starts with #
         var color = '#';
-        // generating 6 times as HTML color code consist 
-        // of 6 letter or digits 
+        // generating 6 times as HTML color code consist
+        // of 6 letter or digits
         for (var i = 0; i < 6; i++) {
           color += letters[(Math.floor(Math.random() * 16))];
         }
