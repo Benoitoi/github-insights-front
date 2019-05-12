@@ -13,6 +13,14 @@ export class AppComponent implements OnInit {
   nbRepositoriesReady: boolean = false;
   nbMembersReady: boolean = false;
   iamUrl = environment.iam + "api/code"
+  dataError: boolean;
+  data2Error: boolean;
+  data3Error: boolean;
+  data4Error: boolean;
+  data5Error: boolean;
+  data6Error: boolean;
+  nbMembersError: boolean;
+  nbRepositoriesError: boolean;
   constructor(private apiService: ApiService, private http: HttpClient) { }
 
   title = 'Browser market shares at a specific website, 2014';
@@ -28,12 +36,15 @@ export class AppComponent implements OnInit {
   organisation = "Zenika";
   user = null;
   token = null;
+  connected = false;
   dataReady = false
   data2Ready = false
   data3Ready = false
   data4Ready = false
   data5Ready = false
   data6Ready = false
+  errorIam = false;
+  errorApi = false
   columnNames = ['Browser', 'Percentage'];
   options = {
     colors: [],
@@ -72,58 +83,69 @@ export class AppComponent implements OnInit {
 
 
   ngOnInit(): void {
-
     var token = this.getCookie("token");
-    var reqHeader = new HttpHeaders({
-      'Authorization': 'Bearer ' + token,
-    });
+    if (token) {
+      this.connected = true;
+      var reqHeader = new HttpHeaders({
+        'Authorization': 'Bearer ' + token,
+      });
 
-    // console.log(token);
-    // var instance = axios.create({
-    //   baseURL: this.iamUrl,
-    //   timeout: 60000,
-    //   headers: { 'Authorization': 'Bearer ' + token }
-    // });
+      // console.log(token);
+      // var instance = axios.create({
+      //   baseURL: this.iamUrl,
+      //   timeout: 60000,
+      //   headers: { 'Authorization': 'Bearer ' + token }
+      // });
 
 
-    axios.get(this.iamUrl, { headers: {
-      'Accept': 'application/json',
-      'Authorization': 'Bearer ' + token
-    } }).then(response => {
-      console.log(response.data)
-      this.user = response.data.username;
-      this.token = response.data.token;
-      console.log(response.data.username)
-      console.log(response.data.token)
-      this.load();
+      axios.get(this.iamUrl, {
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer ' + token
+        }
+      }).then(response => {
+        console.log(response.data)
+        this.user = response.data.username;
+        this.token = response.data.token;
+        console.log(response.data.username)
+        console.log(response.data.token)
+        this.load();
+      }
+      ).catch(response => {
+        this.errorIam = true;
+        console.log(response)
+      });
+      // instance.get()
+      //   .then(function (response) {
+      //     // handle success
+      //     console.log(response);
+      //   })
+      //   .catch(function (error) {
+      //     // handle error
+      //     console.log(error);
+      //   })
+      //   .finally(function () {
+      //     // always executed
+      //   });
+      //   this.apiService.createCORSRequestIam(token)
+      //   .then((response) => {
+      //       console.log(response)
+      //   }).catch((error) => {
+      //       console.log("réponse du serveur ko");
+      //   })
+      // this.getUser(token, reqHeader)
+      //    .subscribe((data: string) => {
+      //      console.log(data)
+      //    });
     }
-    );
-    // instance.get()
-    //   .then(function (response) {
-    //     // handle success
-    //     console.log(response);
-    //   })
-    //   .catch(function (error) {
-    //     // handle error
-    //     console.log(error);
-    //   })
-    //   .finally(function () {
-    //     // always executed
-    //   });
-    //   this.apiService.createCORSRequestIam(token)
-    //   .then((response) => {
-    //       console.log(response)
-    //   }).catch((error) => {
-    //       console.log("réponse du serveur ko");
-    //   })
-    // this.getUser(token, reqHeader)
-    //    .subscribe((data: string) => {
-    //      console.log(data)
-    //    });
   }
 
   getUser(token: string, reqHeader: HttpHeaders) {
     return this.http.get(this.iamUrl, { headers: reqHeader });
+  }
+
+  login() {
+    window.location.href = environment.iam + 'login/github';
   }
 
   load() {
@@ -133,12 +155,29 @@ export class AppComponent implements OnInit {
     this.data4Ready = false
     this.data5Ready = false
     this.data6Ready = false
+    this.dataError = false
+    this.data2Error = false
+    this.data3Error = false
+    this.data4Error = false
+    this.data5Error = false
+    this.data6Error = false
+    this.nbMembersError = false;
+    this.nbRepositoriesError = false;
+    this.nbMembers = null;
+    this.nbRepositories = null;
+    this.data = [];
+    this.data2 = [];
+    this.data3 = [];
+    this.data4 = [];
+    this.data5 = [];
+    this.data6 = [];
     // Nb de membres
     this.apiService.getStats('nbMembresStats', this.organisation, this.user, this.token).then((response) => {
       console.log(response)
       this.nbMembers = response.countMembers;
       this.nbMembersReady = true;
     }).catch((error) => {
+      this.nbMembersError = true;
       console.log(error)
     })
     // Stats basiques
@@ -220,6 +259,10 @@ export class AppComponent implements OnInit {
       console.log(this.data4)
       console.log(this.data5)
     }).catch((error) => {
+      this.data3Error = true;
+      this.data6Error = true;
+      this.data4Error = true;
+      this.data5Error = true;
       console.log(error)
     })
 
@@ -236,6 +279,7 @@ export class AppComponent implements OnInit {
       this.nbRepositories = response.countRepositories;
       this.nbRepositoriesReady = true;
     }).catch((error) => {
+      this.nbRepositoriesError = true;
       console.log(error)
     })
 
@@ -269,6 +313,7 @@ export class AppComponent implements OnInit {
       }
       this.dataReady = true;
     }).catch((error) => {
+      this.dataError = true;
       console.log(error)
     })
 
@@ -282,6 +327,7 @@ export class AppComponent implements OnInit {
       this.data2Ready = true;
       console.log(response)
     }).catch((error) => {
+      this.data2Error = true;
       console.log(error)
     })
   }

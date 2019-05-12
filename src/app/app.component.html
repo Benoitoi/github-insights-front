@@ -1,39 +1,52 @@
-<mat-form-field ngDefaultControl  appearance="outline">
+<h1 *ngIf="user">Hello {{user}}</h1>
+<h1 *ngIf="errorIam">Iam Error</h1>
+<h1 *ngIf="!user">Please login :</h1>
+<button *ngIf="!connected" mat-raised-button (click)="login()">Login</button>
+<div *ngIf="connected && !errorIam">
+    <mat-form-field ngDefaultControl appearance="outline">
         <mat-label>Organisation</mat-label>
-    <input [(ngModel)]="organisation" (keyup.enter)="load()" maxlength="256" matInput placeholder="Organisation">
-</mat-form-field>
-<button mat-raised-button (click)="load()">Ok</button>
-<h2 *ngIf="nbRepositoriesReady">Number of repositories : {{nbRepositories}}</h2>
-<h2 *ngIf="nbMembersReady">Number of members : {{nbMembers}}</h2>
-<h2 *ngIf="dataReady">Most used Language by organisation : {{data[0][0]}} ({{data[0][1]}} repositories)</h2>
-<h2 *ngIf="data4Ready">Most famous user : {{data4[0][0]}} ({{data4[0][2]}} followers)</h2>
-<h2 *ngIf="data2Ready">Most active user : {{data2[0][0]}} ({{data2[0][1]}} repositories)</h2>
-<h2 *ngIf="data5Ready">User with most repositories : {{data5[0][0]}} ({{data5[0][1]}} repositories owned)</h2>
-<h2 *ngIf="data6Ready">Most liked language by users : {{data6[0][0]}} ({{data6[0][1]}} users on {{nbMembers}})</h2>
+        <input [(ngModel)]="organisation" (keyup.enter)="load()" maxlength="256" matInput placeholder="Organisation">
+    </mat-form-field>
+    <button mat-raised-button (click)="load()">Ok</button>
+    <h2 *ngIf="nbRepositoriesReady && !nbRepositoriesError">Number of repositories : {{nbRepositories}}</h2>
+    <h2 *ngIf="nbMembersReady && !nbMembersError">Number of members : {{nbMembers}}</h2>
+    <h2 *ngIf="dataReady && !dataError">Most used Language by organisation : {{data[0][0]}} ({{data[0][1]}} repositories)</h2>
+    <h2 *ngIf="data4Ready && !dataError">Most famous user : {{data4[0][0]}} ({{data4[0][2]}} followers)</h2>
+    <h2 *ngIf="data2Ready && !dataError">Most active user : {{data2[0][0]}} ({{data2[0][1]}} repositories)</h2>
+    <h2 *ngIf="data5Ready && !dataError">User with most repositories : {{data5[0][0]}} ({{data5[0][1]}} repositories owned)</h2>
+    <h2 *ngIf="data6Ready && !dataError">Most liked language by users : {{data6[0][0]}} ({{data6[0][1]}} users on {{nbMembers}})</h2>
 
-<google-chart *ngIf="dataReady" title="Top Languages" type="ColumnChart" [data]="data"
-    [columnNames]="['Languages', 'Number of repositories']" [options]="options" [width]="innerWidth" [height]="height">
-</google-chart>
-<mat-spinner *ngIf="!dataReady">Loading Top Lanugages...</mat-spinner>
-<google-chart *ngIf="data2Ready" title="Top Members" type="BarChart" [data]="data2"
-    [columnNames]="['User', 'Pull Requests']" [options]="options" [width]="width" [height]="height">
-</google-chart>
-<mat-spinner *ngIf="!data2Ready"></mat-spinner>
-<google-chart *ngIf="data5Ready" title="Most repositories owned" type="PieChart" [data]="data5"
-    [columnNames]="['User', 'Repositories owned']" [options]="options" [width]="width" [height]="height">
-</google-chart>
-<mat-spinner *ngIf="!data5Ready"></mat-spinner>
-<google-chart *ngIf="data3Ready" title="User languages" type="Table" [data]="data3"
-    [columnNames]="['User', 'Favorite Language', 'Number of repositories']" [options]="options" [width]="width"
-    [height]="height">
-</google-chart>
-<mat-spinner *ngIf="!data3Ready"></mat-spinner>
-<google-chart *ngIf="data6Ready" title="Most liked languages" type="Histogram" [data]="data6"
-    [columnNames]="['Languages', 'Number of user using']" [options]="options" [width]="width" [height]="height">
-</google-chart>
-<mat-spinner *ngIf="!data6Ready"></mat-spinner>
-<google-chart *ngIf="data4Ready" title="" type="TreeMap" [data]="data4" [columnNames]="['User', 'Parent', 'Followers']"
-    [options]="optionsTree" [width]="innerWidth" [height]="height">
-</google-chart>
-<mat-spinner *ngIf="!data4Ready"></mat-spinner>
-<router-outlet></router-outlet>
+    <google-chart *ngIf="dataReady && !dataError" title="Top Languages" type="ColumnChart" [data]="data"
+        [columnNames]="['Languages', 'Number of repositories']" [options]="options" [width]="innerWidth"
+        [height]="height">
+    </google-chart>
+    <h3 *ngIf="dataError">Top Languages request error</h3>
+    <mat-spinner *ngIf="!dataReady && !dataError">Loading Top Lanugages...</mat-spinner>
+    <google-chart *ngIf="data2Ready && !data2Error" title="Top Members" type="BarChart" [data]="data2"
+        [columnNames]="['User', 'Pull Requests']" [options]="options" [width]="width" [height]="height">
+    </google-chart>
+    <h3 *ngIf="data2Error">Top Members request error</h3>
+    <mat-spinner *ngIf="!data2Ready && !data2Error"></mat-spinner>
+    <google-chart *ngIf="data5Ready && !data5Error" title="Most repositories owned" type="PieChart" [data]="data5"
+        [columnNames]="['User', 'Repositories owned']" [options]="options" [width]="width" [height]="height">
+    </google-chart>
+    <h3 *ngIf="data5Error">Repositories request error</h3>
+    <mat-spinner *ngIf="!data5Ready && !data5Error"></mat-spinner>
+    <google-chart *ngIf="data3Ready && !data3Error" title="User languages" type="Table" [data]="data3"
+        [columnNames]="['User', 'Favorite Language', 'Number of repositories']" [options]="options" [width]="width"
+        [height]="height">
+    </google-chart>
+    <h3 *ngIf="data3Error">User request error</h3>
+    <mat-spinner *ngIf="!data3Ready && !data3Error"></mat-spinner>
+    <google-chart *ngIf="data6Ready && !data6Error" title="Most liked languages" type="Histogram" [data]="data6"
+        [columnNames]="['Languages', 'Number of user using']" [options]="options" [width]="width" [height]="height">
+    </google-chart>
+    <h3 *ngIf="data6Error">Languages request error</h3>
+    <mat-spinner *ngIf="!data6Ready && !data6Error"></mat-spinner>
+    <google-chart *ngIf="data4Ready  && !data4Error" title="" type="TreeMap" [data]="data4"
+        [columnNames]="['User', 'Parent', 'Followers']" [options]="optionsTree" [width]="innerWidth" [height]="height">
+    </google-chart>
+    <h3 *ngIf="data4Error">Followers request error</h3>
+    <mat-spinner *ngIf="!data4Ready  && !data4Error"></mat-spinner>
+    <router-outlet></router-outlet>
+</div>
