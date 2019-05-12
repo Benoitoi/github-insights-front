@@ -148,6 +148,10 @@ export class AppComponent implements OnInit {
     window.location.href = environment.iam + 'login/github';
   }
 
+  disconnect() {
+    window.location.href = environment.iam + 'logout';
+  }
+
   load() {
     this.dataReady = false
     this.data2Ready = false

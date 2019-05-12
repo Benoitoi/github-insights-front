@@ -2,6 +2,7 @@
 <h1 *ngIf="errorIam">Iam Error</h1>
 <h1 *ngIf="!user">Please login :</h1>
 <button *ngIf="!connected" mat-raised-button (click)="login()">Login</button>
+<button *ngIf="connected" mat-raised-button (click)="disconnect()">Disconnect</button>
 <div *ngIf="connected && !errorIam">
     <mat-form-field ngDefaultControl appearance="outline">
         <mat-label>Organisation</mat-label>
