@@ -86,7 +86,7 @@ export class AppComponent implements OnInit {
     // });
 
 
-    axios.get('http://localhost:8000/api/code', { headers: {
+    axios.get(this.iamUrl, { headers: {
       'Accept': 'application/json',
       'Authorization': 'Bearer ' + token
     } }).then(response => {
