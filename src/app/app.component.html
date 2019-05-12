@@ -1,6 +1,6 @@
-<h1 *ngIf="user">Hello {{user}}</h1>
+<h1 *ngIf="user && connected">Hello {{user}}</h1>
 <h1 *ngIf="errorIam">Iam Error</h1>
-<h1 *ngIf="!user">Please login :</h1>
+<h1 *ngIf="!user && !connected">Please login :</h1>
 <button *ngIf="!connected" mat-raised-button (click)="login()">Login</button>
 <button *ngIf="connected" mat-raised-button (click)="disconnect()">Disconnect</button>
 <div *ngIf="connected && !errorIam">
